@@ -1,8 +1,15 @@
 cd C:\os\
 
+CYGWIN:
 nasm -felf32 src/boot.asm -o boot.o;
+nasm -felf32 src/gdt.s -o gdt.o;
+nasm -felf32 src/interrupt.s -o interrupt.o;
 /home/ftbuild/opt/cross/bin/i686-elf-gcc -c src/kernel.c -o kernel.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra;
-/home/ftbuild/opt/cross/bin/i686-elf-gcc -T src/linker.ld -o myos.bin -ffreestanding -O2 -nostdlib boot.o kernel.o -lgcc;
+/home/ftbuild/opt/cross/bin/i686-elf-gcc -c src/console.c -o console.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra;
+/home/ftbuild/opt/cross/bin/i686-elf-gcc -c src/timer.c -o timer.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra;
+/home/ftbuild/opt/cross/bin/i686-elf-gcc -c src/descriptor_tables.c -o descriptor_tables.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra;
+/home/ftbuild/opt/cross/bin/i686-elf-gcc -c src/isr.c -o isr.o -std=gnu99 -ffreestanding -O2 -Wall -Wextra;
+/home/ftbuild/opt/cross/bin/i686-elf-gcc -T src/linker.ld -o myos.bin -ffreestanding -O2 -nostdlib boot.o descriptor_tables.o timer.o isr.o gdt.o interrupt.o console.o kernel.o -lgcc;
 
-CMD
+CMD:
 C:/progra~1/qemu/qemu-system-i386 -kernel myos.bin
