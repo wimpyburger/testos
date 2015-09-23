@@ -22,6 +22,20 @@ u16int keycodetoascii(u16int scancode) {
 	return ascii;
 }
 
+void startinput() {
+	terminal_row++;
+	if(terminal_row > 20) {
+		clearconsole();
+		terminal_row = 1;
+	}
+	terminal_column = 0;
+	inputlength = 0;
+	memset(inputbuffer, 0, 20);
+	PrintStringAt(">", terminal_column++, terminal_row+=2);
+	PrintCharAt(32, terminal_column, terminal_row);
+	movecursor(terminal_column, terminal_row);
+}
+
 static void timer_callback(registers_t regs)
 {
 	asm("in $0x60, %al;"
@@ -30,23 +44,38 @@ static void timer_callback(registers_t regs)
 	); // allows multiple keyboard interrupts
 
 	u16int keycode = inb(0x60);
+	// print code
+	PrintStringAt("   ", 77, 24);
+	PrintNumberAt(keycode, 77, 24);
+	if(keycode == 28) { // return key
+		// do stuff with input
+		PrintStringAt(inputbuffer, 0, terminal_row + 1);
+		// prepare for new input
+		startinput();
+	}
+	if(keycode == 14) { // backspace
+		if(terminal_column > 1) {
+			inputlength--;
+			memset(inputbuffer + inputlength, 0, 1);
+			terminal_column--;
+			PrintStringAt(" ", terminal_column, terminal_row);
+			movecursor(terminal_column, terminal_row);
+		}
+	}
 	if(keycodetoascii(keycode) != 0) {
-		PrintCharAt(keycodetoascii(keycode), terminal_column++, terminal_row);
-		
-		// hacky code to get cursor to work
-		terminal_color = make_color(COLOR_WHITE, COLOR_BLACK);
-		PrintCharAt(32, terminal_column, terminal_row);
-		movecursor(terminal_column, terminal_row);
-		
-		// print scan code
-		terminal_color = make_color(COLOR_WHITE, COLOR_DARK_GREY);
-		PrintStringAt("   ", 15, 15);
-		PrintNumberAt(keycode, 15, 15);
+		if(inputlength < 19) {
+			memset(inputbuffer + inputlength, keycodetoascii(keycode), 1);
+			inputlength++;
+			PrintCharAt(keycodetoascii(keycode), terminal_column++, terminal_row);
+			// hacky code to get cursor to work
+			PrintCharAt(32, terminal_column, terminal_row);
+			movecursor(terminal_column, terminal_row);
+		}
 	}
 	
     //PrintStringAt("Tick: ", terminal_column, terminal_row);
 	if(terminal_row > 25) {
-		terminal_row = 0;
+		terminal_row = 1;
 	}
 	
 }

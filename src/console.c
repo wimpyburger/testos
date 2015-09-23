@@ -8,6 +8,8 @@ uint16_t* terminal_buffer;
 size_t terminal_column; // x
 size_t terminal_row; // y
 uint8_t terminal_color;
+char *inputbuffer;
+size_t inputlength = 0;
 
 uint8_t make_color(enum vga_color fg, enum vga_color bg) {
 	return fg | bg << 4;
@@ -32,9 +34,9 @@ void clearconsole() {
 
 void initconsole() {
 	// set default console vars
-	terminal_row = 5;
+	terminal_row = 0;
 	terminal_column = 0;
-	terminal_color = make_color(COLOR_LIGHT_GREY, COLOR_BLACK);
+	terminal_color = make_color(COLOR_WHITE, COLOR_BLACK);
 	terminal_buffer = (uint16_t*) 0xB8000;
 	
 	clearconsole();

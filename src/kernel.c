@@ -33,9 +33,12 @@ void kernel_main() {
 	
 	int lastkey;
 	
-	while(1==1) {
+	
 		render();
 		
+		
+		startinput();
+	while(1==1) {
 		// keyboard input
 		/*u16int keycode = inb(0x60);
 		if(keycode != lastkey && keycode < 50) {
@@ -57,6 +60,7 @@ void render() {
 		PrintStringAt(" ", i, 0);
 	
 	PrintStringAt("START", 0, 0);
+	terminal_color = make_color(COLOR_WHITE, COLOR_BLACK);
 }
 
 void kernel_test() {

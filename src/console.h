@@ -39,6 +39,8 @@ void PrintStringAt(const char* str, size_t x, size_t y);
 void PrintNumberAt(size_t num, size_t x, size_t y);
 static const size_t VGA_WIDTH;
 static const size_t VGA_HEIGHT;
+char *inputbuffer;
+size_t inputlength;
 uint16_t* terminal_buffer;
 size_t terminal_column;
 size_t terminal_row;
