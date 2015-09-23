@@ -17,7 +17,7 @@ void register_interrupt_handler(u8int n, isr_t handler)
 // This gets called from our ASM interrupt handler stub.
 void isr_handler(registers_t regs)
 {
-    PrintStringAt("recieved interrupt: ", terminal_column, terminal_row);
+    PrintStringAt("Recieved interrupt: ", terminal_column, terminal_row);
 	terminal_row++;
     PrintNumberAt(regs.int_no, terminal_column, terminal_row);
 	terminal_row++;

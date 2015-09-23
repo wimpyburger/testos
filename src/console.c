@@ -29,7 +29,8 @@ size_t strlen(const char* str) {
 }
 
 void clearconsole() {
-	memset(terminal_buffer, 0, 4000); // white empty characters to entirety of video buffer
+	memset(terminal_buffer, 0, 4000); // write empty characters to entirety of video buffer
+	// causes cursor to not work over coordinates written with '0's
 }
 
 void initconsole() {

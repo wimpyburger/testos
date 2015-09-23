@@ -27,30 +27,13 @@ void kernel_main() {
 
 	//asm volatile("int $0x3");
     //asm volatile("int $0x4");
-
+	
     asm volatile("sti"); // gets irq working
     init_timer(50); // change this eventually
+	render();
+	startinput();
 	
-	int lastkey;
-	
-	
-		render();
-		
-		
-		startinput();
 	while(1==1) {
-		// keyboard input
-		/*u16int keycode = inb(0x60);
-		if(keycode != lastkey && keycode < 50) {
-			PrintCharAt(keycodetoascii(keycode), terminal_column++, terminal_row);
-			terminal_color = make_color(COLOR_WHITE, COLOR_BLACK);
-			PrintCharAt(32, terminal_column, terminal_row);
-			movecursor(terminal_column, terminal_row);
-			terminal_color = make_color(COLOR_WHITE, COLOR_DARK_GREY);
-			lastkey = keycode;
-		}
-		PrintStringAt("   ", 0, 2);
-		PrintNumberAt(keycode, 0, 2);*/
 	}
 }
 
