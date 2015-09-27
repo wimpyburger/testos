@@ -12,6 +12,7 @@
 #include "descriptor_tables.h"
 #include "timer.h"
 
+
 void render();
 
 #if defined(__cplusplus)
@@ -29,11 +30,12 @@ void kernel_main() {
     //asm volatile("int $0x4");
 	
     asm volatile("sti"); // gets irq working
-    init_timer(50); // change this eventually
+    init_keyboard(); // change this eventually
 	render();
 	startinput();
 	
 	while(1==1) {
+		// keep kernel running
 	}
 }
 
@@ -44,9 +46,4 @@ void render() {
 	
 	PrintStringAt("START", 0, 0);
 	terminal_color = make_color(COLOR_WHITE, COLOR_BLACK);
-}
-
-void kernel_test() {
-	PrintStringAt("KEk", 0, 0);
-	kernel_test();
 }

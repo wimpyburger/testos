@@ -13,3 +13,9 @@ nasm -felf32 src/interrupt.s -o interrupt.o;
 
 CMD:
 C:/progra~1/qemu/qemu-system-i386 -kernel myos.bin
+
+LINUX (Can't get grub-mkrescue working on cygwin):
+mkdir -p isodir/boot/grub
+cp myos.bin isodir/boot/myos.bin
+cp grub.cfg isodir/boot/grub/grub.cfg
+grub-mkrescue -o myos.iso isodir

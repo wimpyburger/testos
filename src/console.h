@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
+#include <stdbool.h>
 
 enum vga_color {
 	COLOR_BLACK = 0,
@@ -39,7 +40,7 @@ void PrintStringAt(const char* str, size_t x, size_t y);
 void PrintNumberAt(size_t num, size_t x, size_t y);
 static const size_t VGA_WIDTH;
 static const size_t VGA_HEIGHT;
-char *inputbuffer;
+char* inputbuffer;
 size_t inputlength;
 uint16_t* terminal_buffer;
 size_t terminal_column;
@@ -52,5 +53,6 @@ void clearconsole();
 void initconsole();
 void movecursor(size_t x, size_t y);
 void* memset(void* pointer, int value, size_t size);
+bool stringstartswith(const char* string, const char* contains);
 
 #endif

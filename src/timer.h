@@ -7,7 +7,7 @@
 #include "console.h"
 
 void startinput();
-void init_timer(u32int frequency);
+void init_keyboard();
 u16int keycodetoascii(u16int scancode);
 
 #endif

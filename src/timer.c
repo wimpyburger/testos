@@ -4,9 +4,42 @@
 #include "timer.h"
 #include "isr.h"
 #include "console.h"
+#include <stdbool.h>
+
+bool caps = false;
 
 u16int keycodetoascii(u16int scancode) {
 	u16int ascii = 0;
+	if(scancode == 2) {
+		ascii = 49; // 1
+	}
+	if(scancode == 3) {
+		ascii = 50; // 2
+	}
+	if(scancode == 4) {
+		ascii = 51; // 3
+	}
+	if(scancode == 5) {
+		ascii = 52; // 4
+	}
+	if(scancode == 6) {
+		ascii = 53; // 5
+	}
+	if(scancode == 7) {
+		ascii = 54; // 6
+	}
+	if(scancode == 8) {
+		ascii = 55; // 7
+	}
+	if(scancode == 9) {
+		ascii = 56; // 8
+	}
+	if(scancode == 10) {
+		ascii = 57; // 9
+	}
+	if(scancode == 11) {
+		ascii = 48; // 0
+	}
 	if(scancode == 16) {
 		ascii = 113; // q
 	}
@@ -85,6 +118,11 @@ u16int keycodetoascii(u16int scancode) {
 	if(scancode == 50) {
 		ascii = 109; // m
 	}
+	
+	
+	if(caps && ascii >= 97 && ascii <= 122) {
+		ascii -= 32; // works for letter only
+	}
 	return ascii;
 }
 
@@ -96,13 +134,26 @@ void startinput() {
 	}
 	terminal_column = 0;
 	inputlength = 0;
-	memset(inputbuffer, 0, 20);
+	memset(inputbuffer, 0, 80);
 	PrintStringAt(">", terminal_column++, terminal_row+=2);
 	PrintCharAt(32, terminal_column, terminal_row);
 	movecursor(terminal_column, terminal_row);
 }
 
-static void timer_callback(registers_t regs)
+void checkcommand(const char* command) {
+	if(stringstartswith(command, "clr")) {
+		clearconsole();
+		terminal_column = 0;
+		terminal_row = 0;
+	}
+	
+	if(stringstartswith(command, "echo")) {
+		terminal_column = 0;
+		PrintStringAt(command + 5, terminal_column, terminal_row + 1);
+	}
+}
+
+static void keyboard_callback(registers_t regs)
 {
 	asm("in $0x60, %al;"
 		"mov $0x20, %al;"
@@ -118,7 +169,7 @@ static void timer_callback(registers_t regs)
 	// RETURN KEY
 	if(keycode == 28) {
 		// do stuff with input
-		PrintStringAt(inputbuffer, 0, terminal_row + 1);
+		checkcommand(inputbuffer);
 		// prepare for new input
 		startinput();
 	}
@@ -134,9 +185,33 @@ static void timer_callback(registers_t regs)
 		}
 	}
 	
+	// SHIFT
+	if(keycode == 42) { // pressed
+		caps = true;
+	}
+	if(keycode == 170) { // released
+		caps = false;
+	}
+	
+	// CAPS LOCK
+	if(keycode == 58) {
+		caps = !caps;
+	}
+	
+	// SPACE
+	if(keycode == 57) {
+		if(inputlength < 79) { // char limit
+			memset(inputbuffer + inputlength, 32, 1);
+			inputlength++;
+			terminal_column++;
+			PrintStringAt(" ", terminal_column, terminal_row);
+			movecursor(terminal_column, terminal_row);
+		}
+	}
+	
 	// LETTER
 	if(keycodetoascii(keycode) != 0) {
-		if(inputlength < 19) { // 19 char limit
+		if(inputlength < 79) { // 19 char limit
 			memset(inputbuffer + inputlength, keycodetoascii(keycode), 1); // add character to end of buffer
 			inputlength++;
 			PrintCharAt(keycodetoascii(keycode), terminal_column++, terminal_row);
@@ -153,8 +228,8 @@ static void timer_callback(registers_t regs)
 	
 }
 
-void init_timer(u32int frequency)
+void init_keyboard()
 {
     // Firstly, register our timer callback.
-    register_interrupt_handler(IRQ1, &timer_callback);
+    register_interrupt_handler(IRQ1, &keyboard_callback);
 }

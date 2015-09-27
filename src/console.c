@@ -8,7 +8,7 @@ uint16_t* terminal_buffer;
 size_t terminal_column; // x
 size_t terminal_row; // y
 uint8_t terminal_color;
-char *inputbuffer;
+char* inputbuffer;
 size_t inputlength = 0;
 
 uint8_t make_color(enum vga_color fg, enum vga_color bg) {
@@ -23,7 +23,7 @@ uint16_t make_vgaentry(char c, uint8_t color) {
 
 size_t strlen(const char* str) {
 	size_t ret = 0;
-	while ( str[ret] != 0 )
+	while (str[ret] != 0)
 		ret++;
 	return ret;
 }
@@ -137,4 +137,15 @@ void* memset(void* pointer, int value, size_t size) {
 	for(size_t i = 0; i < size; i++)
 		dest[i] = (unsigned char) value;
 	return pointer;
+}
+
+bool stringstartswith(const char* string, const char* contains) {
+	for(size_t i = 0; i < strlen(contains); i++) {
+		if(string[i] == contains[i]) {
+			continue;
+		} else {
+			return false;
+		}
+	}
+	return true;
 }
